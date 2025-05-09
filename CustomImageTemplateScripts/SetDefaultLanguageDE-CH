@@ -1,0 +1,33 @@
+# The language we want as new default. Language tag can be found here: https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/available-language-packs-for-windows?view=windows-11#language-packs
+$LPlanguage = "de-CH"
+
+# As In some countries the input locale might differ from the installed language pack language, we use a separate input local variable.
+# A list of input locales can be found here: https://learn.microsoft.com/en-us/windows-hardware/manufacture/desktop/default-input-locales-for-windows-language-packs?view=windows-11#input-locales
+$InputlocaleRegion = "de-CH"
+
+# Geographical ID we want to set. GeoID can be found here: https://learn.microsoft.com/en-us/windows/win32/intl/table-of-geographical-locations
+$geoId = "223"
+
+# Configure new language defaults under current user (system) after which it can be copied to system
+Set-WinUILanguageOverride -Language $LPlanguage
+
+# adding the input locale language to the preferred language list, and make it as the first of the list. 
+$OldList = Get-WinUserLanguageList
+$UserLanguageList = New-WinUserLanguageList -Language $InputlocaleRegion
+$UserLanguageList += $OldList
+Set-WinUserLanguageList -LanguageList $UserLanguageList -Force
+
+# Set Win Home Location, sets the home location setting for the current user. This is for Region location 
+Write-LogEntry -Value "Set Region location $geoId" -Severity 1
+Set-WinHomeLocation -GeoId $geoId
+
+# Set Culture, sets the user culture for the current user account. This is for Region format
+Write-LogEntry -Value "Set Region format $InputlocaleRegion" -Severity 1
+Set-Culture -CultureInfo $InputlocaleRegion
+
+# Copy User International Settings from current user to System, including Welcome screen and new user
+Copy-UserInternationalSettingsToSystem -WelcomeScreen $True -NewUser $True
+
+#Set Timezone to Central Europe Standard Time
+$timezoneID = "Central Europe Standard Time"
+Set-TimeZone -Id $timezoneID
