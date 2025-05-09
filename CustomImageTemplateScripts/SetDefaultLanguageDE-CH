@@ -18,11 +18,9 @@ $UserLanguageList += $OldList
 Set-WinUserLanguageList -LanguageList $UserLanguageList -Force
 
 # Set Win Home Location, sets the home location setting for the current user. This is for Region location 
-Write-LogEntry -Value "Set Region location $geoId" -Severity 1
 Set-WinHomeLocation -GeoId $geoId
 
 # Set Culture, sets the user culture for the current user account. This is for Region format
-Write-LogEntry -Value "Set Region format $InputlocaleRegion" -Severity 1
 Set-Culture -CultureInfo $InputlocaleRegion
 
 # Copy User International Settings from current user to System, including Welcome screen and new user
